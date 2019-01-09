@@ -26,7 +26,7 @@ public class TreeBuilder {
 		}
 		for ( String x : expr ) 
 			System.out.println(x);
-		System.out.println("corretto");
+		
 		sc.SyntaxCheck(expr);
 		
 		System.out.println("----");
@@ -56,18 +56,18 @@ public class TreeBuilder {
 				//System.out.println("Sono nel nodo : " + ET.getCurrentNode());
 				OpCode = TC.identifyToken(instructions.get(i)[j]);
 				addNode(ET,OpCode,instructions.get(i)[j]);
-				ET.printBinaryTree(ET.getRoot(), 0);
+				//ET.printBinaryTree(ET.getRoot(), 0);
 				//System.out.println("\n\n ");
 			}
-			//ET.printBinaryTree(ET.getRoot(), 0);
+			ET.printBinaryTree(ET.getRoot(), 0);
 			System.out.println("-----------");
 			instructionTrees.add(ET);
 		}
 	}
 
 	private void addNode(ExprTree ET, int opCode, String value) {
-		System.out.println("Sono nel nodo : " + ET.getCurrentNode());
-		System.out.println(ET.getCurrentNode().getFather());
+		//System.out.println("Sono nel nodo : " + ET.getCurrentNode());
+		//System.out.println(ET.getCurrentNode().getFather());
 		//System.out.println("Sto valutando -" + value + "- nel nodo " + ET.getCurrentNode() + " " + opCode);
 		switch (opCode) {
 		case 1 : 
@@ -89,15 +89,13 @@ public class TreeBuilder {
 			ET.getCurrentNode().setValue("DIV");
 			break;
 		case 7 :
-			if (ET.getCurrentNode().getRC().getValue() == " ") {
-				//TokenNode temp = new TokenNode(ET.getCurrentNode());
-				ET.setCurrentNode(ET.getCurrentNode().getRC());
+			if (ET.getCurrentNode().getLC().getValue() == " ") {
+				ET.setCurrentNode(ET.getCurrentNode().getLC());
 				ET.getCurrentNode().setRC(new TokenNode(" ",null,null,ET.getCurrentNode()));
 				ET.getCurrentNode().setLC(new TokenNode(" ",null,null,ET.getCurrentNode()));
 			}
 			else {
-				//TokenNode temp = new TokenNode(ET.getCurrentNode());
-				ET.setCurrentNode(ET.getCurrentNode().getLC());
+				ET.setCurrentNode(ET.getCurrentNode().getRC());
 				ET.getCurrentNode().setRC(new TokenNode(" ",null,null,ET.getCurrentNode()));
 				ET.getCurrentNode().setLC(new TokenNode(" ",null,null,ET.getCurrentNode()));
 			}
@@ -108,12 +106,17 @@ public class TreeBuilder {
 		case 9 :
 			break;
 		default :
-			if(ET.getCurrentNode().getRC().getValue() == " " )
-				ET.getCurrentNode().getRC().setValue(value);
-			else
+			if(ET.getCurrentNode().getLC().getValue() == " " )
 				ET.getCurrentNode().getLC().setValue(value);
+			else
+				ET.getCurrentNode().getRC().setValue(value);
 		}
 		//System.out.println(ET.getCurrentNode().getValue() + " lch : " + ET.getCurrentNode().getLC().getValue()+ " rch : " + ET.getCurrentNode().getRC().getValue());
 	}
+	public ArrayList<ExprTree> getInstructionTrees() {
+		return instructionTrees;
+	}
+	
+	
 	
 }
