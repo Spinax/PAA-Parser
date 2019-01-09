@@ -24,12 +24,7 @@ public class TreeBuilder {
 			System.out.println("Input non accettato! \nIl file di input deve essere composto da un' istruzione per riga.");
 			System.exit(1);
 		}
-		for ( String x : expr ) 
-			System.out.println(x);
-		
-		sc.SyntaxCheck(expr);
-		
-		System.out.println("----");
+		sc.SyntaxCheck(expr);		
 		instructions.add(expr);
 	} 
 	
@@ -52,23 +47,14 @@ public class TreeBuilder {
 		for (int i = 0; i < instructions.size(); i++) {
 			ExprTree ET = new ExprTree();
 			for (int j = 0; j < instructions.get(i).length; j++) {
-				//System.out.println("Sto leggendo : " + instructions.get(i)[j]);
-				//System.out.println("Sono nel nodo : " + ET.getCurrentNode());
 				OpCode = TC.identifyToken(instructions.get(i)[j]);
 				addNode(ET,OpCode,instructions.get(i)[j]);
-				//ET.printBinaryTree(ET.getRoot(), 0);
-				//System.out.println("\n\n ");
 			}
-			ET.printBinaryTree(ET.getRoot(), 0);
-			System.out.println("-----------");
 			instructionTrees.add(ET);
 		}
 	}
 
 	private void addNode(ExprTree ET, int opCode, String value) {
-		//System.out.println("Sono nel nodo : " + ET.getCurrentNode());
-		//System.out.println(ET.getCurrentNode().getFather());
-		//System.out.println("Sto valutando -" + value + "- nel nodo " + ET.getCurrentNode() + " " + opCode);
 		switch (opCode) {
 		case 1 : 
 			ET.getRoot().setValue("GET");
@@ -111,7 +97,6 @@ public class TreeBuilder {
 			else
 				ET.getCurrentNode().getRC().setValue(value);
 		}
-		//System.out.println(ET.getCurrentNode().getValue() + " lch : " + ET.getCurrentNode().getLC().getValue()+ " rch : " + ET.getCurrentNode().getRC().getValue());
 	}
 	public ArrayList<ExprTree> getInstructionTrees() {
 		return instructionTrees;

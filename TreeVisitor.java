@@ -1,11 +1,16 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Stack;
 
 public class TreeVisitor {
 
 	private ExprTree T;
+	private Hashtable<String,Integer> VarTab = new Hashtable<String,Integer>();
 	private ArrayList<Integer> Ops = new ArrayList<Integer>();
 	private int position = 0;
+	String tmpVar = "";
 	
 	TreeVisitor(ExprTree T) {
 		this.T = T;
@@ -20,7 +25,6 @@ public class TreeVisitor {
 		TokenNode current = T.getCurrentNode();
 		
 		while(true) {
- 
 			if(current != null) {
 				if(current.getRC() != null) 
 					s.push(current.getRC());
@@ -39,22 +43,34 @@ public class TreeVisitor {
 				current = current.getRC();
 			} 
 			else {
-				//System.out.println(current.getValue());
+				System.out.println(current.getValue());
 				createOps(current.getValue());
 				current = null;
 				position++;
-				//for (Integer x : Ops)
-				//	System.out.print(x+"--");
-				System.out.println();
+			//for (Integer x : Ops)
+			//	System.out.print(x+"--");
+			//System.out.println();
+				System.out.println("x = " + VarTab.get("x"));
 			}
 		}
 	}
 	private void createOps(String val) {
-		//System.out.println(Ops.size());
-		//System.out.println(position);
 		
 		if (isANum(val)) {
+			//System.out.println("NUM");
 			Ops.add(position, Integer.parseInt(val));
+		}
+		
+		else if (isAVar(val)) {
+			if (VarTab.containsKey(tmpVar)) {
+				System.out.println("conosco questa var");
+				Ops.set(position, VarTab.get(val));
+			}
+			else {
+				System.out.println("non conosco questa var");
+				tmpVar = val;
+			}
+			position--;
 		}
 		
 		else if (val.equals("ADD")) {
@@ -90,17 +106,32 @@ public class TreeVisitor {
 				position -= 2;
 			}
 		}	
+		
 		else if (val == "GET") {
-			System.out.println("Risultato : " + Ops.get(position-2));
+			if ( Ops.get(position-2) == null) {
+				System.out.println("Risultato : " + Ops.get(position-1));
+				position = 0;
+			}
+			else {
+				System.out.println("Risultato : " + Ops.get(position-2));
+				position = 0;
+			}
+		}
+		
+		else if (val == "SET") {	
+			VarTab.put(tmpVar, Ops.get(position-1));
 			position = 0;
 		}
-		//else if (val == "SET") {
-			//aggiungere nella hashmap il val precedente
-		//}
 	}
 	
 	private boolean isAVar(String v) {
-		return v.matches("^[\\$_a-zA-Z]+[\\$_\\w]*$");
+		return (v.matches("^[\\$_a-zA-Z]+[\\$_\\w]*$")
+				&& !v.equals("ADD")
+				&& !v.equals("SUB")
+				&& !v.equals("MUL")
+				&& !v.equals("DIV")
+				&& !v.equals("GET")
+				&& !v.equals("SET"));
 	}
 	
 	private boolean isANum(String v) {
